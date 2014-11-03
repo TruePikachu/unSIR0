@@ -1,0 +1,9 @@
+.deps
+Makefile
+*.o
+.*.swp
+config.log
+config.status
+autom4te.cache
+core
+depcomp
