@@ -6,6 +6,7 @@ class SpriteFrame;
 #include <istream>
 #include <ostream>
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 class SpriteFile {
@@ -34,7 +35,6 @@ class SpritePalette {
 			uint8_t	r;
 			uint8_t	g;
 			uint8_t	b;
-			uint8_t	a;
 		} Color;
 	private:
 		std::vector< Color >	colors;
@@ -48,14 +48,17 @@ class SpritePalette {
 class SpriteFrame {
 	friend std::ostream& operator<<(std::ostream&, const SpriteFrame&);
 	private:
-		size_t		x;
-		size_t		y;
+		size_t		nPixels;
 		uint8_t *	data;
 	public:
-				 SpriteFrame	(size_t x, size_t y);
+				 SpriteFrame	(size_t nPixels);
 				 SpriteFrame	(const SpriteFrame&);
 				~SpriteFrame	();
 		SpriteFrame&	operator=	(SpriteFrame);
+		size_t		getSize		() const;
+		const uint8_t*	getData		() const;
+		uint8_t*	getData		();
+		uint8_t		width;		// Width in tiles
 };
 
 #endif
