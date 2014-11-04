@@ -266,3 +266,79 @@ uint16_t SpriteIOInfoBlock::getUnkBool5() const {
 uint16_t SpriteIOInfoBlock::getUnkBool6() const {
 	return unkBool6;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIOFrameBlock&p) {
+	os << "SpriteIOFrameBlock: unkBool7=" << p.unkBool7 << ",unkBool8=" << p.unkBool8 << ",unkInt=" << p.unkInt << endl;
+	os << "frameList (" << p.frameList.size() << " entries):\n";
+	for(int i=0;i<p.frameList.size();i++)
+		os << "<frameList#" << i << ">\n" << p.frameList[i] << endl;
+	os << "(SpriteIOFrameBlock)\n";
+	os << *p.palette << "SpriteIOFrameBlock)\n";
+	return os;
+}
+
+SpriteIOFrameBlock::SpriteIOFrameBlock(std::istream&file) {
+	STRUCT_START;
+	NEW_DWORD(offFrameTable);
+	NEW_DWORD(offPalette);
+	READ_WORD(unkBool7);
+	READ_WORD(unkBool8);
+	READ_WORD(unkInt);
+	NEW_WORD(nbFrames);
+	for(int i=0;i<nbFrames;i++) {
+		FILE_SEEK(offFrameTable+4*i);
+		NEW_DWORD(offNewFrame);
+		FILE_SEEK(offNewFrame);
+		frameList.push_back(SpriteIORawFrame(file));
+	}
+	FILE_SEEK(offPalette);
+	palette = new SpriteIOPalette(file);
+}
+
+SpriteIOFrameBlock::SpriteIOFrameBlock(const SpriteIOFrameBlock&other) : unkBool7(other.unkBool7),unkBool8(other.unkBool8),unkInt(other.unkInt) {
+	frameList=other.frameList;
+	palette = new SpriteIOPalette(*other.palette);
+}
+
+SpriteIOFrameBlock::~SpriteIOFrameBlock() {
+	delete palette;
+}
+
+SpriteIOFrameBlock& SpriteIOFrameBlock::operator=(SpriteIOFrameBlock other) {
+	unkBool7=other.unkBool7;
+	unkBool8=other.unkBool8;
+	unkInt=other.unkInt;
+	frameList=other.frameList;
+	palette = new SpriteIOPalette(*other.palette);
+	return *this;
+}
+
+const std::vector< SpriteIORawFrame >& SpriteIOFrameBlock::getFrameList() const {
+	return frameList;
+}
+
+std::vector< SpriteIORawFrame >& SpriteIOFrameBlock::getFrameList() {
+	return frameList;
+}
+
+const SpriteIOPalette& SpriteIOFrameBlock::getPalette() const {
+	return *palette;
+}
+
+SpriteIOPalette& SpriteIOFrameBlock::getPalette() {
+	return *palette;
+}
+
+uint16_t SpriteIOFrameBlock::getUnkBool7() const {
+	return unkBool7;
+}
+
+uint16_t SpriteIOFrameBlock::getUnkBool8() const {
+	return unkBool8;
+}
+
+uint16_t SpriteIOFrameBlock::getUnkInt() const {
+	return unkInt;
+}
