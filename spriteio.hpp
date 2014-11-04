@@ -81,9 +81,6 @@ class SpriteIOInfoBlock {
 		uint16_t			unkBool6;
 	public:
 					 SpriteIOInfoBlock	(std::istream&);
-					 SpriteIOInfoBlock	(const SpriteIOInfoBlock&);
-					~SpriteIOInfoBlock	();
-		SpriteIOInfoBlock&	operator=		(SpriteIOInfoBlock);
 		const std::vector< SpriteIODBS >& getDbsList	() const;
 		std::vector< SpriteIODBS >& getDbsList		();
 		const std::vector< SpriteIOFPair >& getFPairList() const;
@@ -202,6 +199,7 @@ class SpriteIODBG {
 		std::vector< SpriteIODBI >&	dbiList;
 	public:
 				 SpriteIODBG	(std::istream&);
+		SpriteIODBG&	operator=	(SpriteIODBG);
 		const std::vector< SpriteIODBI >& getDBIList() const;
 		std::vector< SpriteIODBI >& getDBIList();
 };

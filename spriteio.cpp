@@ -173,3 +173,96 @@ uint16_t SpriteIOSubHeader::getUnkBool1() const {
 uint16_t SpriteIOSubHeader::getUnkBool2() const {
 	return unkBool2;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIOInfoBlock&p) {
+	os << "SpriteIOInfoBlock: unkInt1=" << p.unkInt1 << ",unkBool3=" << p.unkBool3 << ",unkBool4=" << p.unkBool4 << ",unkBool5=" << p.unkBool5 << ",unkBool6=" << p.unkBool6 << endl;
+	os << "dbsList (" << p.dbsList.size() << " entries):\n";
+	for(int i=0;i<p.dbsList.size();i++)
+		os << "<dbsList#" << i << ">\n" << p.dbsList[i] << endl;
+	os << "(SpriteIOInfoBlock)\n";
+	os << "fpairList (" << p.fpairList.size() << " entries):\n";
+	for(int i=0;i<p.fpairList.size();i++)
+		os << "<fpairList#" << i << ">\n" << p.fpairList[i] << endl;
+	os << "(SpriteIOInfoBlock)\n";
+	os << "dbgList (" << p.dbgList.size() << " entries):\n";
+	for(int i=0;i<p.dbgList.size();i++)
+		os << "<dbgList#" << i << ">\n" << p.dbgList[i] << endl;
+	os << "(SpriteIOInfoBlock)\n";
+	return os;
+}
+
+SpriteIOInfoBlock::SpriteIOInfoBlock(std::istream&file) {
+	STRUCT_START;
+	NEW_DWORD(offDbsList);
+	NEW_DWORD(offFpairList);
+	NEW_DWORD(offDbgList);
+	NEW_WORD(nbEntriesOffG);
+	READ_WORD(unkInt1);
+	READ_WORD(unkBool3);
+	READ_WORD(unkBool4);
+	READ_WORD(unkBool5);
+	READ_WORD(unkBool6);
+	for(int i=0;i<((offFpairList-offDbsList)/4);i++) {
+		FILE_SEEK(offDbsList+4*i);
+		NEW_DWORD(offNewDbs);
+		FILE_SEEK(offNewDbs);
+		dbsList.push_back(SpriteIODBS(file));
+	}
+	// In theory, the FpairList is ended by the first DBG address
+	FILE_SEEK(offDbgList);
+	NEW_DWORD(offFirstDbg);
+	for(int i=0;i<((offFirstDbg-offFpairList)/4);i++) {
+		FILE_SEEK(offFpairList+4*i);
+		fpairList.push_back(SpriteIOFPair(file));
+	}
+	for(int i=0;i<nbEntriesOffG;i++) {
+		FILE_SEEK(offDbgList+8*i);
+		dbgList.push_back(SpriteIODBG(file));
+	}
+}
+
+const std::vector< SpriteIODBS >& SpriteIOInfoBlock::getDbsList() const {
+	return dbsList;
+}
+
+std::vector< SpriteIODBS >& SpriteIOInfoBlock::getDbsList() {
+	return dbsList;
+}
+
+const std::vector< SpriteIOFPair >& SpriteIOInfoBlock::getFPairList() const {
+	return fpairList;
+}
+
+std::vector< SpriteIOFPair >& SpriteIOInfoBlock::getFPairList() {
+	return fpairList;
+}
+
+const std::vector< SpriteIODBG >& SpriteIOInfoBlock::getDbgList() const {
+	return dbgList;
+}
+
+std::vector< SpriteIODBG >& SpriteIOInfoBlock::getDbgList() {
+	return dbgList;
+}
+
+uint16_t SpriteIOInfoBlock::getUnkInt1() const {
+	return unkInt1;
+}
+
+uint16_t SpriteIOInfoBlock::getUnkBool3() const {
+	return unkBool3;
+}
+
+uint16_t SpriteIOInfoBlock::getUnkBool4() const {
+	return unkBool4;
+}
+
+uint16_t SpriteIOInfoBlock::getUnkBool5() const {
+	return unkBool5;
+}
+
+uint16_t SpriteIOInfoBlock::getUnkBool6() const {
+	return unkBool6;
+}
