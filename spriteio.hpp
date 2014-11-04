@@ -21,7 +21,6 @@ class SpriteIO {
 	friend std::ostream& operator<<(std::ostream&,const SpriteIO&);
 	private:
 		size_t		sData;
-		char*		fData;
 		SpriteIOHeader*	header;
 	public:
 					 SpriteIO	(std::istream&);
@@ -29,7 +28,6 @@ class SpriteIO {
 					~SpriteIO	();
 		SpriteIO&		operator=	(SpriteIO);
 		size_t			getDataSize	() const;
-		const char*		getData		() const;
 		const SpriteIOHeader&	getHeader	() const;
 		SpriteIOHeader&		getHeader	();
 };
