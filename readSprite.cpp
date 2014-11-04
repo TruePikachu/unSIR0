@@ -1,7 +1,6 @@
-#include "spritefile.hpp"
+#include "spriteio.hpp"
 #include <fstream>
 #include <iostream>
-#include <vector>
 using namespace std;
 
 int main(int argc,char *argv[]) {
@@ -10,7 +9,7 @@ int main(int argc,char *argv[]) {
 		return 0;
 	}
 	ifstream pFile(argv[1]);
-	SpriteFile mySprite(pFile);
+	SpriteIO mySprite(pFile);
 	pFile.close();
 	cout << mySprite << endl;
 	return 0;

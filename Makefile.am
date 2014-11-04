@@ -1,3 +1,3 @@
 bin_PROGRAMS = readSprite
-readSprite_SOURCES = readSprite.cpp spritefile.cpp
-noinst_HEADERS = spritefile.hpp
+readSprite_SOURCES = readSprite.cpp spriteio.cpp
+noinst_HEADERS = spritefile.hpp spriteio.hpp
