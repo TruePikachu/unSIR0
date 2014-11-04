@@ -342,3 +342,56 @@ uint16_t SpriteIOFrameBlock::getUnkBool8() const {
 uint16_t SpriteIOFrameBlock::getUnkInt() const {
 	return unkInt;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIOPalette&p) {
+	os << "SpriteIOPalette: unknown0=" << p.unknown0 << ",unknown1=" << p.unknown1 << ",unknown2=" << p.unknown2 << ",unknown3=" << p.unknown3 << ",endOfPalData=" << p.endOfPalData << endl;
+	os << "colors (" << p.colors.size() << " entries):\n";
+	for(int i=0;i<p.colors.size();i++)
+		os << "<colors#" << i << ">\n" << p.colors[i] << endl;
+	os << "(SpriteIOPalette)\n";
+	return os;
+}
+
+SpriteIOPalette::SpriteIOPalette(std::istream&file) {
+	STRUCT_START;
+	NEW_DWORD(offPaletteData);
+	READ_WORD(unknown0);
+	READ_WORD(unknown1);
+	READ_WORD(unknown2);
+	READ_WORD(unknown3);
+	READ_DWORD(endOfPalData);
+	for(int i=0;i<16;i++) {
+		FILE_SEEK(offPaletteData+4*i);
+		colors.push_back(SpriteIOColor(file));
+	}
+}
+
+const std::vector< SpriteIOColor >& SpriteIOPalette::getColors() const {
+	return colors;
+}
+
+std::vector< SpriteIOColor >& SpriteIOPalette::getColors() {
+	return colors;
+}
+
+uint16_t SpriteIOPalette::getUnk0() const {
+	return unknown0;
+}
+
+uint16_t SpriteIOPalette::getUnk1() const {
+	return unknown1;
+}
+
+uint16_t SpriteIOPalette::getUnk2() const {
+	return unknown2;
+}
+
+uint16_t SpriteIOPalette::getUnk3() const {
+	return unknown3;
+}
+
+uint32_t SpriteIOPalette::getUnk4() const {
+	return endOfPalData;
+}
