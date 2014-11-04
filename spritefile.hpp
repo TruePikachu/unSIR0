@@ -63,6 +63,7 @@ class SpriteFrame {
 		size_t		getSize		() const;
 		const uint8_t*	getData		() const;
 		uint8_t*	getData		();
+		bool		flipX;
 		uint8_t		width;		// Width in tiles
 };
 

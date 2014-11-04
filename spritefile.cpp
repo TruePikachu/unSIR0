@@ -20,6 +20,7 @@ std::ostream& operator<<(std::ostream&os, SpriteFile&p) {
 	for(vector< SpriteAnimFrame >::const_iterator it=p.animationFrames.begin();it!=p.animationFrames.end();++it) {
 		os << i++ << '\t' << *it;
 		p.frames[it->realFrameID].width=(it->val1&0x80)?2:4;
+		p.frames[it->realFrameID].flipX=(it->val3&0x10)?1:0;
 		os << p.frames[it->realFrameID] << endl;
 	}
 	return os << endl;
@@ -168,8 +169,16 @@ std::ostream& operator<<(std::ostream&os, const SpriteFrame&p) {
 		for(int y=0;y<8;y++) {
 			for(int xT=0;xT<p.width;xT++) {
 				for(int x=0;x<8;x++) {
-					uint8_t tileID = xT + p.width*yT;
-					uint8_t *pD = p.data+x+8*y+64*tileID;
+					uint8_t tileID;
+					if(p.flipX)
+						tileID = (p.width-1-xT) + p.width*yT;
+					else
+						tileID = xT + p.width*yT;
+					uint8_t *pD;
+					if(p.flipX)
+						pD = p.data+(7-x)+8*y+64*tileID;
+					else
+						pD = p.data+x+8*y+64*tileID;
 					if(*pD==0)
 						os << '.';
 					else
