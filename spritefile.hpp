@@ -12,7 +12,7 @@ class SpriteAnimFrame;
 #include <vector>
 
 class SpriteFile {
-	friend std::ostream& operator<<(std::ostream&, const SpriteFile&);
+	friend std::ostream& operator<<(std::ostream&, SpriteFile&);
 	private:
 		SpritePalette*			palette;
 		std::vector< SpriteFrame >	frames;

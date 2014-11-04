@@ -8,20 +8,20 @@
 #include <vector>
 using namespace std;
 
-std::ostream& operator<<(std::ostream&os, const SpriteFile&p) {
+std::ostream& operator<<(std::ostream&os, SpriteFile&p) {
 	os << "SpriteFile:\n";
 	os << *p.palette << endl;
-	os << "Frames: (n=" << p.frames.size() << ")\n";
 	int i=0;
-	for(vector< SpriteFrame >::const_iterator it=p.frames.begin();it!=p.frames.end();++it)
-		os << "(i=" << i++ << ")\n" << *it << endl;
 	os << "Animations:\n";
 	for(vector< SpriteAnim >::const_iterator it=p.animations.begin();it!=p.animations.end();++it)
 		os << *it << endl;
 	os << "AnimationFrames:\n";
 	i=0;
-	for(vector< SpriteAnimFrame >::const_iterator it=p.animationFrames.begin();it!=p.animationFrames.end();++it)
+	for(vector< SpriteAnimFrame >::const_iterator it=p.animationFrames.begin();it!=p.animationFrames.end();++it) {
 		os << i++ << '\t' << *it;
+		p.frames[it->realFrameID].width=(it->val1&0x80)?2:4;
+		os << p.frames[it->realFrameID] << endl;
+	}
 	return os << endl;
 }
 
