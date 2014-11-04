@@ -109,3 +109,67 @@ uint32_t SpriteIOHeader::getOffB() const {
 	return off_b;
 }
 
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIOSubHeader&p) {
+	os << "SpriteIOSubHeader: unkBool1=" << p.unkBool1 << ",unkBool2=" << p.unkBool2 << endl;
+	os << *p.infoBlock << "(SpriteIOSubHeader)\n";
+	os << *p.frameBlock << "(SpriteIOSubHeader)\n";
+	return os;
+}
+
+SpriteIOSubHeader::SpriteIOSubHeader(std::istream&file) {
+	STRUCT_START;
+	NEW_DWORD(offInfoBlock);
+	NEW_DWORD(offFrameBlock);
+	READ_WORD(unkBool1);
+	READ_WORD(unkBool2);
+	FILE_SEEK(offInfoBlock);
+	infoBlock = new SpriteIOInfoBlock(file);
+	FILE_SEEK(offFrameBlock);
+	frameBlock = new SpriteIOFrameBlock(file);
+}
+
+SpriteIOSubHeader::SpriteIOSubHeader(const SpriteIOSubHeader&other) : unkBool1(other.unkBool1),unkBool2(other.unkBool2) {
+	infoBlock = new SpriteIOInfoBlock(*other.infoBlock);
+	frameBlock = new SpriteIOFrameBlock(*other.frameBlock);
+}
+
+SpriteIOSubHeader::~SpriteIOSubHeader() {
+	delete infoBlock;
+	delete frameBlock;
+}
+
+SpriteIOSubHeader& SpriteIOSubHeader::operator=(SpriteIOSubHeader other) {
+	unkBool1=other.unkBool1;
+	unkBool2=other.unkBool2;
+	delete infoBlock;
+	delete frameBlock;
+	infoBlock = new SpriteIOInfoBlock(*other.infoBlock);
+	frameBlock = new SpriteIOFrameBlock(*other.frameBlock);
+	return *this;
+}
+
+const SpriteIOInfoBlock& SpriteIOSubHeader::getInfoBlock() const {
+	return *infoBlock;
+}
+
+SpriteIOInfoBlock& SpriteIOSubHeader::getInfoBlock() {
+	return *infoBlock;
+}
+
+const SpriteIOFrameBlock& SpriteIOSubHeader::getFrameBlock() const {
+	return *frameBlock;
+}
+
+SpriteIOFrameBlock& SpriteIOSubHeader::getFrameBlock() {
+	return *frameBlock;
+}
+
+uint16_t SpriteIOSubHeader::getUnkBool1() const {
+	return unkBool1;
+}
+
+uint16_t SpriteIOSubHeader::getUnkBool2() const {
+	return unkBool2;
+}
