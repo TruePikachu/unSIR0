@@ -395,3 +395,35 @@ uint16_t SpriteIOPalette::getUnk3() const {
 uint32_t SpriteIOPalette::getUnk4() const {
 	return endOfPalData;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIOColor&p) {
+	os << "SpriteIOColor: ";
+	char buf[64];
+	sprintf(buf,"#%02X%02X%02X",p.r,p.g,p.b);
+	os << buf << endl;
+	return os;
+}
+
+SpriteIOColor::SpriteIOColor(std::istream&file) {
+	STRUCT_START;
+	READ_BYTE(r);
+	READ_BYTE(g);
+	READ_BYTE(b);
+	NEW_BYTE(x);
+	if(x!=0x80)
+		throw runtime_error("Weird color?");
+}
+
+uint8_t SpriteIOColor::getRed() const {
+	return r;
+}
+
+uint8_t SpriteIOColor::getGreen() const {
+	return g;
+}
+
+uint8_t SpriteIOColor::getBlue() const {
+	return b;
+}
