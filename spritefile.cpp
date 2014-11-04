@@ -12,8 +12,16 @@ std::ostream& operator<<(std::ostream&os, const SpriteFile&p) {
 	os << "SpriteFile:\n";
 	os << *p.palette << endl;
 	os << "Frames: (n=" << p.frames.size() << ")\n";
+	int i=0;
 	for(vector< SpriteFrame >::const_iterator it=p.frames.begin();it!=p.frames.end();++it)
+		os << "(i=" << i++ << ")\n" << *it << endl;
+	os << "Animations:\n";
+	for(vector< SpriteAnim >::const_iterator it=p.animations.begin();it!=p.animations.end();++it)
 		os << *it << endl;
+	os << "AnimationFrames:\n";
+	i=0;
+	for(vector< SpriteAnimFrame >::const_iterator it=p.animationFrames.begin();it!=p.animationFrames.end();++it)
+		os << i++ << '\t' << *it;
 	return os << endl;
 }
 
@@ -72,11 +80,60 @@ SpriteFile::SpriteFile(std::istream&file) {
 				}
 				file.seekg(old);
 			} else {
-				memset(writePos,0xFF,doCmd.count*2);
+				memset(writePos,0,doCmd.count*2);
 				writePos+=doCmd.count*2;
 			}
 		}
 		frames.push_back(newFrame);
+	}
+	// Load animations
+	LoadDWORD(offSpriteInfoBlock,offSpriteSubHeader+0x0);
+	LoadWORD(animCount,offSpriteInfoBlock+0xC);
+	LoadDWORD(offDBS,offSpriteInfoBlock+0x0);
+	LoadDWORD(offDataBlockG,offSpriteInfoBlock+0x8);
+	int maxAnimFrame = 0;
+	for(int mainID=0;mainID<animCount;mainID++) {
+		LoadDWORD(offDataBlockH,offDataBlockG+8*mainID);
+		LoadDWORD(subAnimCount,offDataBlockG+8*mainID+4);
+		for(int subID=0;subID<subAnimCount;subID++) {
+			LoadDWORD(offDataBlockI,offDataBlockH+4*subID);
+			SpriteAnim newAnim;
+			newAnim.mainID=mainID;
+			newAnim.subID=subID;
+			file.seekg(offDataBlockI);
+			for(;;) {
+				SpriteAnim::Frame newFrame;
+				file.read((char*)&newFrame,sizeof(newFrame));
+				if(newFrame.time==0)
+					break;
+				if(newFrame.frameID > maxAnimFrame)
+					maxAnimFrame=newFrame.frameID;
+				newAnim.frames.push_back(newFrame);
+			}
+			animations.push_back(newAnim);
+		}
+	}
+	// Load animation frames
+	for(int frameID=0;frameID<maxAnimFrame;frameID++) {
+		LoadDWORD(offDataBlockS,offDBS+4*frameID);
+		file.seekg(offDataBlockS);
+		SpriteAnimFrame newFrame;
+		int32_t bD;
+		file.read((char*)&bD,4);
+		newFrame.realFrameID=bD;
+		int8_t bB;
+		file.read((char*)&bB,1);
+		newFrame.val0 = bB;
+		file.read((char*)&bB,1);
+		newFrame.val1 = bB;
+		file.read((char*)&bB,1);
+		newFrame.val2 = bB;
+		file.read((char*)&bB,1);
+		newFrame.val3 = bB;
+		uint16_t bW;
+		file.read((char*)&bW,2);
+		newFrame.val4 = bW;
+		animationFrames.push_back(newFrame);
 	}
 }
 
@@ -109,11 +166,11 @@ std::ostream& operator<<(std::ostream&os, const SpriteFrame&p) {
 	os << "SpriteFrame: (width=" << (int)p.width << "):\n";
 	for(int yT=0;yT<((p.nPixels/64)/p.width);yT++)
 		for(int y=0;y<8;y++) {
-			for(int xT=0;xT<p.width;xT++)
+			for(int xT=0;xT<p.width;xT++) {
 				for(int x=0;x<8;x++) {
 					uint8_t tileID = xT + p.width*yT;
 					uint8_t *pD = p.data+x+8*y+64*tileID;
-					if(*pD==0xFF)
+					if(*pD==0)
 						os << '.';
 					else
 						if(*pD > 0xF)
@@ -123,6 +180,7 @@ std::ostream& operator<<(std::ostream&os, const SpriteFrame&p) {
 						else
 							os << (char)(*pD+'0');
 				}
+			}
 			os << endl;
 		}
 	return os;
@@ -154,4 +212,21 @@ SpriteFrame::~SpriteFrame() {
 
 uint8_t* SpriteFrame::getData() {
 	return data;
+}
+
+//////////
+
+std::ostream& operator<<(std::ostream&os, const SpriteAnim& p) {
+	os << "SpriteAnim " << p.mainID << ':' << p.subID << '\n';
+	for(vector< SpriteAnim::Frame >::const_iterator it=p.frames.begin();it!=p.frames.end();++it)
+		os << "  LEN=" << it->time << "  AnimFrameID=" << it->frameID << "  Unk=" << it->unk1 << ',' << it->unk2 << ',' << it->unk3 << ',' << it->unk4 <<  endl;
+	os << "(end)\n";
+	return os;
+}
+
+//////////
+
+std::ostream& operator<<(std::ostream&os, const SpriteAnimFrame& p) {
+	os << "realFrameID=" << p.realFrameID << "   val0..4=" << (int)p.val0 << ',' << (int)p.val1 << ',' << (int)p.val2 << ',' << (int)p.val3 << ',' << (int)p.val4 << endl;
+	return os;
 }

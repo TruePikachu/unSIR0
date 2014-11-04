@@ -3,6 +3,8 @@
 class SpriteFile;
 class SpritePalette;
 class SpriteFrame;
+class SpriteAnim;
+class SpriteAnimFrame;
 #include <istream>
 #include <ostream>
 #include <stdint.h>
@@ -14,6 +16,8 @@ class SpriteFile {
 	private:
 		SpritePalette*			palette;
 		std::vector< SpriteFrame >	frames;
+		std::vector< SpriteAnim >	animations;
+		std::vector< SpriteAnimFrame >	animationFrames;
 	public:
 				 SpriteFile	(std::istream&);
 				 SpriteFile	(const SpriteFile&);
@@ -50,6 +54,7 @@ class SpriteFrame {
 	private:
 		size_t		nPixels;
 		uint8_t *	data;
+
 	public:
 				 SpriteFrame	(size_t nPixels);
 				 SpriteFrame	(const SpriteFrame&);
@@ -61,4 +66,31 @@ class SpriteFrame {
 		uint8_t		width;		// Width in tiles
 };
 
+class SpriteAnim {
+	friend std::ostream& operator<<(std::ostream&, const SpriteAnim&);
+	public:
+		typedef struct {
+			int16_t	time;
+			int16_t	frameID;
+			int16_t	unk1;
+			int16_t	unk2;
+			int16_t	unk3;
+			int16_t	unk4;
+		} Frame;
+		int			mainID;
+		int			subID;
+		std::vector< Frame >	frames;
+};
+
+class SpriteAnimFrame {
+	friend std::ostream& operator<<(std::ostream&, const SpriteAnimFrame&);
+	public:
+	
+		int32_t	realFrameID;
+		int8_t	val0;
+		int8_t	val1;
+		int8_t	val2;
+		int8_t	val3;
+		uint16_t	val4;
+};
 #endif
