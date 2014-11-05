@@ -212,8 +212,24 @@ uint8_t* SpriteRawFrame::getData() {
 
 #define PIXEL	pData[x+8*y+64*xT+64*width*yT]
 std::ostream& SpriteRawFrame::render(std::ostream&os,int width,const SpritePalette* palette) const {
+	os << "   ";
+	for(int x=0;x<(8*width);x++) {
+		if(palette)
+			os << ' ';
+		os << x/10;
+	}
+	os << "\n   ";
+	for(int x=0;x<(8*width);x++) {
+		if(palette)
+			os << ' ';
+		os << x%10;
+	}
+	os << endl;
 	for(int yT=0;yT<(nPixels/64/width);yT++)
 		for(int y=0;y<8;y++) {
+			if((y+8*yT)<10)
+				os << ' ';
+			os << y+8*yT << ' ';
 			for(int xT=0;xT<width;xT++)
 				for(int x=0;x<8;x++)
 					if(palette)
@@ -276,14 +292,14 @@ SpriteAnimFrame& SpriteAnim::operator[] (int i) {
 std::ostream& operator<<(std::ostream&os,const SpriteAnimFrame&p) {
 	os << "SpriteAnimFrame: time=" << p.time << ",width=" << p.width << endl;
 	char buffer[64];
-	sprintf(buffer,"raw=%4i    val0..8 == %4i  %4i  %4i  %4i | 0x%02X  0x%02X  0x%02X  0x%02X  0x%04X\n",p.rawID,(int16_t)p.val0,(int16_t)p.val1,(int16_t)p.val2,(int16_t)p.val3,(int)p.val4,(int)p.val5,(int)p.val6,(int)p.val7,p.val8);
+	sprintf(buffer,"raw=%4i    %4i  dY=%4i  %4i  %4i | yC=%4i  0x%02X  xC=%4i  0x%02X  0x%04X\n",p.rawID,(int16_t)p.val0,(int16_t)p.val1,(int16_t)p.val2,(int16_t)p.val3,p.yC,(int)p.val5,p.xC,(int)p.val7,p.val8);
 	os << buffer;
 	return p.render(os,p.width,p.gPalette);
 }
 
 SpritePalette* SpriteAnimFrame::gPalette = 0;
 
-SpriteAnimFrame::SpriteAnimFrame(const SpriteRawFrame&p,int rawID,int time,uint16_t val0,uint16_t val1,uint16_t val2,uint16_t val3,uint8_t val4,uint8_t val5,uint8_t val6,uint8_t val7,uint16_t val8) : SpriteRawFrame(p),time(time),width(1),val0(val0),val1(val1),val2(val2),val3(val3),val4(val4),val5(val5),val6(val6),val7(val7),val8(val8),rawID(rawID) {
+SpriteAnimFrame::SpriteAnimFrame(const SpriteRawFrame&p,int rawID,int time,uint16_t val0,uint16_t val1,uint16_t val2,uint16_t val3,int8_t yC,uint8_t val5,int8_t xC,uint8_t val7,uint16_t val8) : SpriteRawFrame(p),time(time),width(1),val0(val0),val1(val1),val2(val2),val3(val3),yC(yC^0xFF),val5(val5),xC(xC^0xFF),val7(val7),val8(val8),rawID(rawID) {
 	// Figure out the size (TODO FIXME)
 	if(val5&0x80)
 		width=2;

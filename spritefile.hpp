@@ -93,15 +93,15 @@ class SpriteAnimFrame : public SpriteRawFrame {
 		uint16_t	val1;
 		uint16_t	val2;
 		uint16_t	val3;
-		uint8_t		val4;
+		int8_t		xC;
 		uint8_t		val5;
-		uint8_t		val6;
+		int8_t		yC;
 		uint8_t		val7;
 		uint16_t	val8;
 
 	public:
 		static SpritePalette*		gPalette;
-				 SpriteAnimFrame	(const SpriteRawFrame&,int,int,uint16_t,uint16_t,uint16_t,uint16_t,uint8_t,uint8_t,uint8_t,uint8_t,uint16_t);
+				 SpriteAnimFrame	(const SpriteRawFrame&,int,int,uint16_t,uint16_t,uint16_t,uint16_t,int8_t,uint8_t,int8_t,uint8_t,uint16_t);
 		int		getTime			() const;
 		int		getWidth		() const;
 		int		getHeight		() const;
