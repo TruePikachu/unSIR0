@@ -196,10 +196,9 @@ class SpriteIOFPair {
 class SpriteIODBG {
 	friend std::ostream& operator<<(std::ostream&,const SpriteIODBG&);
 	private:
-		std::vector< SpriteIODBI >&	dbiList;
+		std::vector< SpriteIODBI >	dbiList;
 	public:
 				 SpriteIODBG	(std::istream&);
-		SpriteIODBG&	operator=	(SpriteIODBG);
 		const std::vector< SpriteIODBI >& getDBIList() const;
 		std::vector< SpriteIODBI >& getDBIList();
 };

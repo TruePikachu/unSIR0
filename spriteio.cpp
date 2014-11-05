@@ -566,3 +566,34 @@ int16_t SpriteIOFPair::getN1() const {
 int16_t SpriteIOFPair::getN2() const {
 	return n2;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIODBG&p) {
+	os << "SpriteIODBG:\n";
+	os << "dbiList (" << p.dbiList.size() << " entries):\n";
+	for(int i=0;i<p.dbiList.size();i++)
+		os << "<dbiList#" << i << ">\n" << p.dbiList[i] << endl;
+	os << "(SpriteIODBG)\n";
+	return os;
+}
+
+SpriteIODBG::SpriteIODBG(std::istream&file) {
+	STRUCT_START;
+	NEW_DWORD(offTable);
+	NEW_DWORD(nbEntries);
+	for(int i=0;i<nbEntries;i++) {
+		FILE_SEEK(offTable+4*i);
+		NEW_DWORD(offDBI);
+		FILE_SEEK(offDBI);
+		dbiList.push_back(SpriteIODBI(file));
+	}
+}
+
+const std::vector< SpriteIODBI >& SpriteIODBG::getDBIList() const {
+	return dbiList;
+}
+
+std::vector< SpriteIODBI >& SpriteIODBG::getDBIList() {
+	return dbiList;
+}
