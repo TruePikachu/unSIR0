@@ -474,9 +474,10 @@ SpriteIORawFrame::SpriteIORawFrame(std::istream&file) {
 				*(writePos++) = (twoPx >> 0) & 0xF;
 				*(writePos++) = (twoPx >> 4) & 0xF;
 			}
-		} else
+		} else {
 			memset(writePos,0,it->size*2);
-		writePos += it->size*2;
+			writePos += it->size*2;
+		}
 	}
 }
 
