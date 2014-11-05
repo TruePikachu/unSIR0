@@ -300,14 +300,34 @@ std::ostream& operator<<(std::ostream&os,const SpriteAnimFrame&p) {
 SpritePalette* SpriteAnimFrame::gPalette = 0;
 
 SpriteAnimFrame::SpriteAnimFrame(const SpriteRawFrame&p,int rawID,int time,uint16_t val0,uint16_t val1,uint16_t val2,uint16_t val3,int8_t yC,uint8_t val5,int8_t xC,uint8_t val7,uint16_t val8) : SpriteRawFrame(p),time(time),width(1),val0(val0),val1(val1),val2(val2),val3(val3),yC(yC^0xFF),val5(val5),xC(xC^0xFF),val7(val7),val8(val8),rawID(rawID) {
-	// Figure out the size (TODO FIXME)
-	if(val5&0x80)
-		width=2;
-	else
-		width=4;
+	// Figure out the size
+	int tileCount = getNPixels()/64;
+	switch(val5&0xF0) {
+		case 0x0:
+			// Square ratio
+			for(width=1;width<tileCount;width++)
+				if(tileCount==(width*width))
+					break;
+			break;
+		case 0x40:
+			// Wide ratio
+			for(width=1;width<tileCount;width++)
+				if((2*tileCount)==(width*width))
+					break;
+			break;
+		case 0x80:
+			// Tall ratio
+			for(width=1;width<tileCount;width++)
+				if(tileCount=(width*width*2))
+					break;
+			break;
+		default:
+			throw logic_error("RESEARCH THIS! (size)");
+	}
+
 	// Handle val7 flags
-	if((val7 & 0xE7) != 0x80)
-		throw logic_error("RESEARCH THIS!");
+//	if((val7 & 0xE7) != 0x80)
+//		throw logic_error("RESEARCH THIS! (val7)");
 	if(val7&0x10) { // Do X flip
 		uint8_t* xFlipped = new uint8_t[getNPixels()];
 		for(int tY=0;tY<getHeight();tY++)
