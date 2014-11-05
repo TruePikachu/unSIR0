@@ -597,3 +597,44 @@ const std::vector< SpriteIODBI >& SpriteIODBG::getDBIList() const {
 std::vector< SpriteIODBI >& SpriteIODBG::getDBIList() {
 	return dbiList;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIODBI&p) {
+	os << "SpriteIODBI: time=" << p.time << ",dbsFrame=" << p.dbsFrame << ",val0=" << p.val0 << ",val1=" << p.val1 << ",val2=" << p.val2 << ",val3=" << p.val3 << endl;
+	return os;
+}
+
+SpriteIODBI::SpriteIODBI(std::istream&file) {
+	STRUCT_START;
+	READ_WORD(time);
+	READ_WORD(dbsFrame);
+	READ_WORD(val0);
+	READ_WORD(val1);
+	READ_WORD(val2);
+	READ_WORD(val3);
+}
+
+uint16_t SpriteIODBI::getTime() const {
+	return time;
+}
+
+uint16_t SpriteIODBI::getFrameNo() const {
+	return dbsFrame;
+}
+
+uint16_t SpriteIODBI::getVal0() const {
+	return val0;
+}
+
+uint16_t SpriteIODBI::getVal1() const {
+	return val1;
+}
+
+uint16_t SpriteIODBI::getVal2() const {
+	return val2;
+}
+
+uint16_t SpriteIODBI::getVal3() const {
+	return val3;
+}
