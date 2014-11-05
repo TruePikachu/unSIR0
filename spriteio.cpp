@@ -504,3 +504,44 @@ size_t SpriteIORawFrame::getNumPixels() const {
 const uint8_t* SpriteIORawFrame::getMap() const {
 	return colorMap;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIODBS&p) {
+	os << "SpriteIODBS: frameID=" << p.frameID << ",val0=" << (int)p.val0 << ",val1=" << (int)p.val1 << ",val2=" << (int)p.val2 << ",val3=" << (int)p.val3 << ",val4=" << p.val4 << endl;
+	return os;
+}
+
+SpriteIODBS::SpriteIODBS(std::istream&file) {
+	STRUCT_START;
+	READ_DWORD(frameID);
+	READ_BYTE(val0);
+	READ_BYTE(val1);
+	READ_BYTE(val2);
+	READ_BYTE(val3);
+	READ_WORD(val4);
+}
+
+uint32_t SpriteIODBS::getFrameID() const {
+	return frameID;
+}
+
+uint8_t SpriteIODBS::getVal0() const {
+	return val0;
+}
+
+uint8_t SpriteIODBS::getVal1() const {
+	return val1;
+}
+
+uint8_t SpriteIODBS::getVal2() const {
+	return val2;
+}
+
+uint8_t SpriteIODBS::getVal3() const {
+	return val3;
+}
+
+uint16_t SpriteIODBS::getVal4() const {
+	return val4;
+}
