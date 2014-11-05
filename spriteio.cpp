@@ -545,3 +545,24 @@ uint8_t SpriteIODBS::getVal3() const {
 uint16_t SpriteIODBS::getVal4() const {
 	return val4;
 }
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIOFPair&p) {
+	os << "SpriteIOFPair: " << p.n1 << ',' << p.n2 << endl;
+	return os;
+}
+
+SpriteIOFPair::SpriteIOFPair(std::istream&file) {
+	STRUCT_START;
+	READ_WORD(n1);
+	READ_WORD(n2);
+}
+
+int16_t SpriteIOFPair::getN1() const {
+	return n1;
+}
+
+int16_t SpriteIOFPair::getN2() const {
+	return n2;
+}
