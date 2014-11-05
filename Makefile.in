@@ -33,7 +33,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = readSprite$(EXEEXT)
+bin_PROGRAMS = readSprite$(EXEEXT) dumpSprite$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(noinst_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
@@ -49,6 +49,10 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am_dumpSprite_OBJECTS = dumpSprite.$(OBJEXT) spritefile.$(OBJEXT) \
+	spriteio.$(OBJEXT)
+dumpSprite_OBJECTS = $(am_dumpSprite_OBJECTS)
+dumpSprite_LDADD = $(LDADD)
 am_readSprite_OBJECTS = readSprite.$(OBJEXT) spriteio.$(OBJEXT)
 readSprite_OBJECTS = $(am_readSprite_OBJECTS)
 readSprite_LDADD = $(LDADD)
@@ -61,8 +65,8 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(readSprite_SOURCES)
-DIST_SOURCES = $(readSprite_SOURCES)
+SOURCES = $(dumpSprite_SOURCES) $(readSprite_SOURCES)
+DIST_SOURCES = $(dumpSprite_SOURCES) $(readSprite_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -161,6 +165,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 readSprite_SOURCES = readSprite.cpp spriteio.cpp
+dumpSprite_SOURCES = dumpSprite.cpp spritefile.cpp spriteio.cpp
 noinst_HEADERS = spritefile.hpp spriteio.hpp
 all: all-am
 
@@ -237,6 +242,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+dumpSprite$(EXEEXT): $(dumpSprite_OBJECTS) $(dumpSprite_DEPENDENCIES) 
+	@rm -f dumpSprite$(EXEEXT)
+	$(CXXLINK) $(dumpSprite_OBJECTS) $(dumpSprite_LDADD) $(LIBS)
 readSprite$(EXEEXT): $(readSprite_OBJECTS) $(readSprite_DEPENDENCIES) 
 	@rm -f readSprite$(EXEEXT)
 	$(CXXLINK) $(readSprite_OBJECTS) $(readSprite_LDADD) $(LIBS)
@@ -247,7 +255,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dumpSprite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/readSprite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spritefile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spriteio.Po@am__quote@
 
 .cpp.o:

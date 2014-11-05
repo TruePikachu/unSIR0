@@ -2,22 +2,20 @@
 #define __SPRITEFILE_HPP
 class SpriteFile;
 class SpritePalette;
-class SpriteFrame;
+class SpriteRawFrame;
 class SpriteAnim;
 class SpriteAnimFrame;
 #include <istream>
 #include <ostream>
 #include <stdint.h>
-#include <string>
 #include <vector>
 
 class SpriteFile {
-	friend std::ostream& operator<<(std::ostream&, SpriteFile&);
+	friend std::ostream& operator<<(std::ostream&,const SpriteFile&);
 	private:
 		SpritePalette*			palette;
-		std::vector< SpriteFrame >	frames;
+		std::vector< SpriteRawFrame >	rawFrames;
 		std::vector< SpriteAnim >	animations;
-		std::vector< SpriteAnimFrame >	animationFrames;
 	public:
 				 SpriteFile	(std::istream&);
 				 SpriteFile	(const SpriteFile&);
@@ -26,72 +24,68 @@ class SpriteFile {
 
 		const SpritePalette&			getPalette	() const;
 		SpritePalette&				getPalette	();
-		const std::vector< SpriteFrame >&	getFrames	() const;
-		std::vector< SpriteFrame >&		getFrames	();
-		const SpriteFrame&			operator[]	(int) const;
-		SpriteFrame&				operator[]	(int);
+		const std::vector< SpriteRawFrame >&	getRawFrames	() const;
+		std::vector< SpriteRawFrame >&		getRawFrames	();
+		const SpriteRawFrame&			getRawFrame	(int) const;
+		SpriteRawFrame&				getRawFrame	(int);
+		const std::vector< SpriteAnim >&	getAnimations	() const;
+		std::vector< SpriteAnim >&		getAnimations	();
+		const SpriteAnim&			getAnimation	(int,int) const;
+		SpriteAnim&				getAnimation	(int,int);
 };
 
 class SpritePalette {
-	friend std::ostream& operator<<(std::ostream&, const SpritePalette&);
+	friend std::ostream& operator<<(std::ostream&,const SpritePalette&);
 	public:
-		typedef struct {
-			uint8_t	r;
-			uint8_t	g;
-			uint8_t	b;
-		} Color;
+		typedef struct {uint8_t r;uint8_t g;uint8_t b;} Color;
 	private:
-		std::vector< Color >	colors;
+		std::vector< Color >		colors;
 	public:
-		const std::vector< Color >&	getColors	() const;
-		std::vector< Color >&		getColors	();
-		const Color&			operator[]	(int) const;
-		Color&				operator[]	(int);
+		const Color&		operator[]	(int) const;
+		Color&			operator[]	(int);
+		const std::vector< Color >& getColors	() const;
+		std::vector< Color >&	getColors	();
 };
 
-class SpriteFrame {
-	friend std::ostream& operator<<(std::ostream&, const SpriteFrame&);
+class SpriteRawFrame {
+	friend std::ostream& operator<<(std::ostream&,const SpriteRawFrame&);
 	private:
 		size_t		nPixels;
-		uint8_t *	data;
-
+		uint8_t*	pData;
 	public:
-				 SpriteFrame	(size_t nPixels);
-				 SpriteFrame	(const SpriteFrame&);
-				~SpriteFrame	();
-		SpriteFrame&	operator=	(SpriteFrame);
-		size_t		getSize		() const;
+				 SpriteRawFrame	(size_t);
+				 SpriteRawFrame	(const SpriteRawFrame&);
+				~SpriteRawFrame	();
+		SpriteRawFrame&	operator=	(SpriteRawFrame);
+
+		size_t		getNPixels	() const;
 		const uint8_t*	getData		() const;
 		uint8_t*	getData		();
-		bool		flipX;
-		uint8_t		width;		// Width in tiles
 };
 
 class SpriteAnim {
-	friend std::ostream& operator<<(std::ostream&, const SpriteAnim&);
+	friend std::ostream& operator<<(std::ostream&,const SpriteAnim&);
+	private:
+		int				mainID;
+		int				subID;
+		std::vector< SpriteAnimFrame >	frames;
 	public:
-		typedef struct {
-			int16_t	time;
-			int16_t	frameID;
-			int16_t	unk1;
-			int16_t	unk2;
-			int16_t	unk3;
-			int16_t	unk4;
-		} Frame;
-		int			mainID;
-		int			subID;
-		std::vector< Frame >	frames;
+					 SpriteAnim	(int,int);
+		int			getMainID	() const;
+		int			getSubID	() const;
+		const std::vector< SpriteAnimFrame >& getFrames() const;
+		std::vector< SpriteAnimFrame >& getFrames();
+		const SpriteAnimFrame&	operator[]	(int) const;
+		SpriteAnimFrame&	operator[]	(int);
 };
 
-class SpriteAnimFrame {
-	friend std::ostream& operator<<(std::ostream&, const SpriteAnimFrame&);
+class SpriteAnimFrame : public SpriteRawFrame {
+	friend std::ostream& operator<<(std::ostream&,const SpriteAnimFrame&);
+	private:
+		int			time;
 	public:
-	
-		int32_t	realFrameID;
-		int8_t	val0;
-		int8_t	val1;
-		int8_t	val2;
-		int8_t	val3;
-		uint16_t	val4;
+				 SpriteAnimFrame	(const SpriteRawFrame&,int);
+		int		getTime			() const;
 };
-#endif
+
+#endif				
