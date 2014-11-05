@@ -59,6 +59,7 @@ SpriteIOHeader& SpriteIO::getHeader() {
 #define READ_DWORD(x)	file.read((char*)&x,4)
 #define READ_WORD(x)	file.read((char*)&x,2)
 #define READ_BYTE(x)	file.read((char*)&x,1)
+#define READ(x)		file.read((char*)&x,sizeof(x))
 
 //////////
 
@@ -426,4 +427,80 @@ uint8_t SpriteIOColor::getGreen() const {
 
 uint8_t SpriteIOColor::getBlue() const {
 	return b;
+}
+
+//////////
+
+std::ostream& operator<<(std::ostream&os,const SpriteIORawFrame&p) {
+	os << "SpriteIORawFrame: " << p.numPixels << "px = " << p.numPixels/64 << " tiles:\n";
+	for(int tileID=0;tileID<(p.numPixels/64);tileID++) {
+		os << "Tile " << tileID << ":\n";
+		for(int y=0;y<8;y++) {
+			for(int x=0;x<8;x++)
+				if(p.colorMap[64*tileID + 8*y + x]==0)
+					os << '.';
+				else if (p.colorMap[64*tileID + 8*y + x]<10)
+					os << (char)('0'+p.colorMap[64*tileID+8*y+x]);
+				else
+					os << (char)('A'-10+p.colorMap[64*tileID+8*y+x]);
+			os << endl;
+		}
+		os << endl;
+	}
+	return os;
+}
+
+typedef struct{uint32_t source;uint32_t size;uint32_t unknown;}FrameCommand;
+SpriteIORawFrame::SpriteIORawFrame(std::istream&file) {
+	STRUCT_START;
+	vector< FrameCommand > commands;
+	numPixels=0;
+	for(;;) {
+		FrameCommand newCommand;
+		READ(newCommand);
+		if(newCommand.size)
+			commands.push_back(newCommand);
+		else
+			break;
+		numPixels += newCommand.size*2;
+	}
+	colorMap = new uint8_t[numPixels];
+	uint8_t* writePos=colorMap;
+	for(vector< FrameCommand >::iterator it=commands.begin();it!=commands.end();++it) {
+		if(it->source) {
+			FILE_SEEK(it->source);
+			for(int i=0;i<it->size;i++) {
+				NEW_BYTE(twoPx);
+				*(writePos++) = (twoPx >> 0) & 0xF;
+				*(writePos++) = (twoPx >> 4) & 0xF;
+			}
+		} else
+			memset(writePos,0,it->size*2);
+		writePos += it->size*2;
+	}
+}
+
+SpriteIORawFrame::SpriteIORawFrame(const SpriteIORawFrame&other) : numPixels(other.numPixels) {
+	colorMap = new uint8_t[numPixels];
+	memmove(colorMap,other.colorMap,numPixels);
+}
+
+SpriteIORawFrame::~SpriteIORawFrame() {
+	delete[] colorMap;
+}
+
+SpriteIORawFrame& SpriteIORawFrame::operator=(SpriteIORawFrame other) {
+	delete[] colorMap;
+	numPixels=other.numPixels;
+	colorMap = new uint8_t[numPixels];
+	memmove(colorMap,other.colorMap,numPixels);
+	return *this;
+}
+
+size_t SpriteIORawFrame::getNumPixels() const {
+	return numPixels;
+}
+
+const uint8_t* SpriteIORawFrame::getMap() const {
+	return colorMap;
 }

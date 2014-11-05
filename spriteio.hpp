@@ -160,7 +160,7 @@ class SpriteIORawFrame {
 				~SpriteIORawFrame	();
 		SpriteIORawFrame& operator=		(SpriteIORawFrame);
 		size_t		getNumPixels		() const;
-		const uint8_t	getMap			() const;
+		const uint8_t*	getMap			() const;
 };
 
 class SpriteIODBS {
