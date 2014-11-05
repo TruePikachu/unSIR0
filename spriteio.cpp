@@ -581,9 +581,12 @@ int16_t SpriteIOFPair::getN2() const {
 
 std::ostream& operator<<(std::ostream&os,const SpriteIODBG&p) {
 	os << "SpriteIODBG:\n";
-	os << "dbiList (" << p.dbiList.size() << " entries):\n";
-	for(int i=0;i<p.dbiList.size();i++)
-		os << "<dbiList#" << i << ">\n" << p.dbiList[i] << endl;
+	os << "dbiList (" << p.dbiList.size() << " subanim):\n";
+	for(int i=0;i<p.dbiList.size();i++) {
+		os << "<dbiList#" << i << "> n=" << p.dbiList[i].size() << endl;
+		for(int j=0;j<p.dbiList[i].size();j++)
+			os << "<dbiList#" << i << ':' << j << "> " << p.dbiList[i][j];
+	}
 	os << "(SpriteIODBG)\n";
 	return os;
 }
@@ -596,15 +599,24 @@ SpriteIODBG::SpriteIODBG(std::istream&file) {
 		FILE_SEEK(offTable+4*i);
 		NEW_DWORD(offDBI);
 		FILE_SEEK(offDBI);
-		dbiList.push_back(SpriteIODBI(file));
+		// At the first entry in a list of DBIs
+		vector< SpriteIODBI > subAnim;
+		for(;;) {
+			SpriteIODBI newDbi(file);
+			if(newDbi.getTime())
+				subAnim.push_back(newDbi);
+			else
+				break;
+		}
+		dbiList.push_back(subAnim);
 	}
 }
 
-const std::vector< SpriteIODBI >& SpriteIODBG::getDBIList() const {
+const std::vector< std::vector< SpriteIODBI > >& SpriteIODBG::getDBIList() const {
 	return dbiList;
 }
 
-std::vector< SpriteIODBI >& SpriteIODBG::getDBIList() {
+std::vector< std::vector< SpriteIODBI > >& SpriteIODBG::getDBIList() {
 	return dbiList;
 }
 
