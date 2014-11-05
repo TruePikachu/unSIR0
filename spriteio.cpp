@@ -430,23 +430,14 @@ uint8_t SpriteIOColor::getBlue() const {
 }
 
 //////////
-
 std::ostream& operator<<(std::ostream&os,const SpriteIORawFrame&p) {
-	os << "SpriteIORawFrame: " << p.numPixels << "px = " << p.numPixels/64 << " tiles:\n";
-	for(int tileID=0;tileID<(p.numPixels/64);tileID++) {
-		os << "Tile " << tileID << ":\n";
-		for(int y=0;y<8;y++) {
-			for(int x=0;x<8;x++)
-				if(p.colorMap[64*tileID + 8*y + x]==0)
-					os << '.';
-				else if (p.colorMap[64*tileID + 8*y + x]<10)
-					os << (char)('0'+p.colorMap[64*tileID+8*y+x]);
-				else
-					os << (char)('A'-10+p.colorMap[64*tileID+8*y+x]);
+	os << "SpriteIORawFrame: " << p.numPixels << "px = " << p.numPixels/64 << endl;
+	for(int width=1;width<=(p.numPixels/64);width++)
+		if(!((p.numPixels/64)%width)) {
+			os << width << 'x' << p.numPixels/64/width << ":\n";
+			p.renderWithWidth(os,width);
 			os << endl;
 		}
-		os << endl;
-	}
 	return os;
 }
 
@@ -504,6 +495,24 @@ size_t SpriteIORawFrame::getNumPixels() const {
 
 const uint8_t* SpriteIORawFrame::getMap() const {
 	return colorMap;
+}
+
+#define PIXEL colorMap[x+8*y+64*tX+64*width*tY]
+std::ostream& SpriteIORawFrame::renderWithWidth(std::ostream&os,int width) const {
+	int height = numPixels/64/width;
+	for(int tY=0;tY<height;tY++)
+		for(int y=0;y<8;y++) {
+			for(int tX=0;tX<width;tX++)
+				for(int x=0;x<8;x++)
+					if(PIXEL==0)
+						os << '.';
+					else if (PIXEL<10)
+						os << (char)('0'+PIXEL);
+					else
+						os << (char)('A'-10+PIXEL);
+			os << endl;
+		}
+	return os << endl;
 }
 
 //////////

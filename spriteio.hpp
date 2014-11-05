@@ -161,6 +161,7 @@ class SpriteIORawFrame {
 		SpriteIORawFrame& operator=		(SpriteIORawFrame);
 		size_t		getNumPixels		() const;
 		const uint8_t*	getMap			() const;
+		std::ostream&	renderWithWidth		(std::ostream&,int) const;
 };
 
 class SpriteIODBS {
