@@ -244,6 +244,7 @@ std::ostream& SpriteRawFrame::render(std::ostream&os,int width,const SpritePalet
 					}
 			os << endl;
 		}
+	return os;
 }
 
 //////////
@@ -294,7 +295,8 @@ std::ostream& operator<<(std::ostream&os,const SpriteAnimFrame&p) {
 	char buffer[64];
 	sprintf(buffer,"raw=%4i    %4i  dY=%4i  %4i  %4i | yC=%4i  0x%02X  xC=%4i  0x%02X  0x%04X\n",p.rawID,(int16_t)p.val0,(int16_t)p.val1,(int16_t)p.val2,(int16_t)p.val3,p.yC,(int)p.val5,p.xC,(int)p.val7,p.val8);
 	os << buffer;
-	return p.render(os,p.width,p.gPalette);
+	p.render(os,p.width,p.gPalette);
+	return os;
 }
 
 SpritePalette* SpriteAnimFrame::gPalette = 0;
