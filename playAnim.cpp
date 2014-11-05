@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	for(;;) {
 		cout << "\x1b[1;1H";
 		cout << *frame;
-		usleep(frame->getTime()*25000);
+		usleep(frame->getTime()*100000/6);
 		++frame;
 		if(frame==myAnim.getFrames().end())
 			frame=myAnim.getFrames().begin();
