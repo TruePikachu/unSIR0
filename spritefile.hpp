@@ -45,6 +45,7 @@ class SpritePalette {
 		Color&			operator[]	(int);
 		const std::vector< Color >& getColors	() const;
 		std::vector< Color >&	getColors	();
+		std::ostream&	render	(std::ostream&,uint8_t) const;
 };
 
 class SpriteRawFrame {
@@ -61,6 +62,7 @@ class SpriteRawFrame {
 		size_t		getNPixels	() const;
 		const uint8_t*	getData		() const;
 		uint8_t*	getData		();
+		std::ostream&	render		(std::ostream&,int,const SpritePalette* =0) const;
 };
 
 class SpriteAnim {
@@ -71,6 +73,7 @@ class SpriteAnim {
 		std::vector< SpriteAnimFrame >	frames;
 	public:
 					 SpriteAnim	(int,int);
+		bool			isAnim		(int,int) const;
 		int			getMainID	() const;
 		int			getSubID	() const;
 		const std::vector< SpriteAnimFrame >& getFrames() const;
@@ -80,12 +83,29 @@ class SpriteAnim {
 };
 
 class SpriteAnimFrame : public SpriteRawFrame {
+	friend class SpriteFile;
 	friend std::ostream& operator<<(std::ostream&,const SpriteAnimFrame&);
 	private:
+		int			width;
 		int			time;
+		int			rawID;
+		uint16_t	val0;
+		uint16_t	val1;
+		uint16_t	val2;
+		uint16_t	val3;
+		uint8_t		val4;
+		uint8_t		val5;
+		uint8_t		val6;
+		uint8_t		val7;
+		uint16_t	val8;
+
 	public:
-				 SpriteAnimFrame	(const SpriteRawFrame&,int);
+		static SpritePalette*		gPalette;
+				 SpriteAnimFrame	(const SpriteRawFrame&,int,int,uint16_t,uint16_t,uint16_t,uint16_t,uint8_t,uint8_t,uint8_t,uint8_t,uint16_t);
 		int		getTime			() const;
+		int		getWidth		() const;
+		int		getHeight		() const;
+		SpriteAnimFrame&setWidth		(int);
 };
 
 #endif				
