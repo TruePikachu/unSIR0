@@ -120,12 +120,14 @@ const SpriteAnim& SpriteFile::getAnimation(int i, int j) const {
 	for(vector< SpriteAnim >::const_iterator it=animations.begin();it!=animations.end();++it)
 		if(it->isAnim(i,j))
 			return *it;
+	throw runtime_error("Animation doesn't exist");
 }
 
 SpriteAnim& SpriteFile::getAnimation(int i, int j) {
 	for(vector< SpriteAnim >::iterator it=animations.begin();it!=animations.end();++it)
 		if(it->isAnim(i,j))
 			return *it;
+	throw runtime_error("Animation doesn't exist");
 }
 
 //////////
