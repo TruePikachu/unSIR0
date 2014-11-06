@@ -320,7 +320,7 @@ SpriteAnimFrame::SpriteAnimFrame(const SpriteRawFrame&p,int rawID,int time,uint1
 		case 0x80:
 			// Tall ratio
 			for(width=1;width<tileCount;width++)
-				if(tileCount=(width*width*2))
+				if(tileCount==(width*width*2))
 					break;
 			break;
 		default:

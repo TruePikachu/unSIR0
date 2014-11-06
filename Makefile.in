@@ -34,7 +34,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = readSprite$(EXEEXT) dumpSprite$(EXEEXT) \
-	playAnim$(EXEEXT)
+	playAnim$(EXEEXT) makeThumb$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(noinst_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
@@ -54,6 +54,10 @@ am_dumpSprite_OBJECTS = dumpSprite.$(OBJEXT) spritefile.$(OBJEXT) \
 	spriteio.$(OBJEXT)
 dumpSprite_OBJECTS = $(am_dumpSprite_OBJECTS)
 dumpSprite_LDADD = $(LDADD)
+am_makeThumb_OBJECTS = makeThumb.$(OBJEXT) spritefile.$(OBJEXT) \
+	spriteio.$(OBJEXT)
+makeThumb_OBJECTS = $(am_makeThumb_OBJECTS)
+makeThumb_LDADD = $(LDADD)
 am_playAnim_OBJECTS = playAnim.$(OBJEXT) spritefile.$(OBJEXT) \
 	spriteio.$(OBJEXT)
 playAnim_OBJECTS = $(am_playAnim_OBJECTS)
@@ -70,10 +74,10 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(dumpSprite_SOURCES) $(playAnim_SOURCES) \
-	$(readSprite_SOURCES)
-DIST_SOURCES = $(dumpSprite_SOURCES) $(playAnim_SOURCES) \
-	$(readSprite_SOURCES)
+SOURCES = $(dumpSprite_SOURCES) $(makeThumb_SOURCES) \
+	$(playAnim_SOURCES) $(readSprite_SOURCES)
+DIST_SOURCES = $(dumpSprite_SOURCES) $(makeThumb_SOURCES) \
+	$(playAnim_SOURCES) $(readSprite_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -174,6 +178,7 @@ top_srcdir = @top_srcdir@
 readSprite_SOURCES = readSprite.cpp spriteio.cpp
 dumpSprite_SOURCES = dumpSprite.cpp spritefile.cpp spriteio.cpp
 playAnim_SOURCES = playAnim.cpp spritefile.cpp spriteio.cpp
+makeThumb_SOURCES = makeThumb.cpp spritefile.cpp spriteio.cpp
 noinst_HEADERS = spritefile.hpp spriteio.hpp
 all: all-am
 
@@ -253,6 +258,9 @@ clean-binPROGRAMS:
 dumpSprite$(EXEEXT): $(dumpSprite_OBJECTS) $(dumpSprite_DEPENDENCIES) 
 	@rm -f dumpSprite$(EXEEXT)
 	$(CXXLINK) $(dumpSprite_OBJECTS) $(dumpSprite_LDADD) $(LIBS)
+makeThumb$(EXEEXT): $(makeThumb_OBJECTS) $(makeThumb_DEPENDENCIES) 
+	@rm -f makeThumb$(EXEEXT)
+	$(CXXLINK) $(makeThumb_OBJECTS) $(makeThumb_LDADD) $(LIBS)
 playAnim$(EXEEXT): $(playAnim_OBJECTS) $(playAnim_DEPENDENCIES) 
 	@rm -f playAnim$(EXEEXT)
 	$(CXXLINK) $(playAnim_OBJECTS) $(playAnim_LDADD) $(LIBS)
@@ -267,6 +275,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dumpSprite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/makeThumb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/playAnim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/readSprite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spritefile.Po@am__quote@

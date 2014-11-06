@@ -212,8 +212,12 @@ SpriteIOInfoBlock::SpriteIOInfoBlock(std::istream&file) {
 		dbsList.push_back(SpriteIODBS(file));
 	}
 	// In theory, the FpairList is ended by the first DBG address
+	// FIXME Problems happen if e.g. offFirstDbg==0 (m_attack.bin:0x0000)
+	// FIXME It is not known how this can happen, unless the file isn't actually good
 	FILE_SEEK(offDbgList);
 	NEW_DWORD(offFirstDbg);
+	if(!offFirstDbg)
+		throw logic_error("FIXME offFirstDbg==0?!");
 	for(int i=0;i<((offFirstDbg-offFpairList)/4);i++) {
 		FILE_SEEK(offFpairList+4*i);
 		fpairList.push_back(SpriteIOFPair(file));
